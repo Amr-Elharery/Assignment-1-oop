@@ -211,45 +211,45 @@ void Flip(char mode)
     }
     saveImage();
   }
+}
+// Lighten
 
-  // Lighten
-
-  void Lighten()
+void Lighten()
+{
+  for (int i = 0; i < SIZE; i++)
   {
-    for (int i = 0; i < SIZE; i++)
+    for (int j = 0; j < SIZE; j++)
     {
-      for (int j = 0; j < SIZE; j++)
-      {
-        if (image[i][j] <= 190)
-          image[i][j] += 65;
-      }
+      if (image[i][j] <= 190)
+        image[i][j] += 65;
     }
-    saveImage();
   }
+  saveImage();
+}
 
-  // Darken
+// Darken
 
-  void Darken()
+void Darken()
+{
+  for (int i = 0; i < SIZE; i++)
   {
-    for (int i = 0; i < SIZE; i++)
+    for (int j = 0; j < SIZE; j++)
     {
-      for (int j = 0; j < SIZE; j++)
-      {
 
-        image[i][j] = image[i][j] / 2;
-      }
+      image[i][j] = image[i][j] / 2;
     }
-    saveImage();
   }
+  saveImage();
+}
 
-  void Blur()
+void Blur()
+{
+  for (int i = 0; i < SIZE; i++)
   {
-    for (int i = 0; i < SIZE; i++)
+    for (int j = 0; j < SIZE; j++)
     {
-      for (int j = 0; j < SIZE; j++)
-      {
-        image[i][j] = (image[i][j] + image[i + 2][j + 2]) / 2;
-      }
+      image[i][j] = (image[i][j] + image[i + 2][j + 2]) / 2;
     }
-    saveImage();
   }
+  saveImage();
+}

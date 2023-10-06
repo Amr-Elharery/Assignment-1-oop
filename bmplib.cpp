@@ -439,12 +439,12 @@ void show()
 
 void showRGBBMP(unsigned char inputImage[][SIZE][RGB])
 {
-  writeRGBBMP("/tmp/bmplib.bmp", inputImage);
+  writeRGBBMP("./tmp/bmplib.bmp", inputImage);
   show();
 }
 
 void showGSBMP(unsigned char inputImage[][SIZE])
 {
-  writeGSBMP("/tmp/bmplib.bmp", inputImage);
+  writeGSBMP("./tmp/bmplib.bmp", inputImage);
   show();
 }
