@@ -197,6 +197,7 @@ void Flip(char mode)
         image[SIZE - i - 1][SIZE - j - 1] = tmp;
       }
     }
+    saveImage();
   }
   else if (mode == 'h')
   {
