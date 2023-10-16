@@ -21,6 +21,7 @@ void Merge();
 void Flip(char mode);
 void Lighten();
 void Darken();
+void Rotate();
 void Blur();
 
 int main()
@@ -102,6 +103,9 @@ void menu()
         Darken();
     }
 
+    else if (ch == '6')
+      Rotate();
+
     else if (ch == 'c')
       Blur();
 
@@ -171,6 +175,7 @@ void Invert()
   saveImage();
 }
 
+// Merge
 void Merge()
 {
   for (int i = 0; i < SIZE; i++)
@@ -188,26 +193,30 @@ void Flip(char mode)
 {
   if (mode == 'v')
   {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < SIZE / 2; i++) // for loop to iterate  half of the rows in image
     {
-      for (int j = 0; j < SIZE; j++)
+      for (int j = 0; j < SIZE; j++) // for loop to iterate all the columns in the image
       {
-        unsigned char tmp = image[i][j];
-        image[i][j] = image[SIZE - i - 1][SIZE - j - 1];
-        image[SIZE - i - 1][SIZE - j - 1] = tmp;
+        unsigned char temp = image[i][j]; // creat unsigned char to store the pixel of the left part to put it in the right pixel
+
+        image[i][j] = image[SIZE - 1 - i][j]; // put the right pixel in the left pixel
+
+        image[SIZE - 1 - i][j] = temp; // put the left pixel to the right pixel
       }
     }
     saveImage();
   }
   else if (mode == 'h')
   {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < SIZE; i++) // for loop to iterate  all rows in image
     {
-      for (int j = 0; j < SIZE; j++)
+      for (int j = 0; j < SIZE / 2; j++) // for loop to iterate half of the columns in the image
       {
-        unsigned char tmp = image[i][j];
-        image[i][j] = image[i][SIZE - j - 1];
-        image[i][SIZE - j - 1] = tmp;
+        unsigned char temp = image[i][j]; // creat unsigned char to store the pixel of the upper part to put it in the lower pixel
+
+        image[i][j] = image[i][SIZE - 1 - j]; // put the lower pixel in the upper pixel
+
+        image[i][SIZE - 1 - j] = temp; // put the upper pixel to the lower pixel
       }
     }
     saveImage();
@@ -241,6 +250,31 @@ void Darken()
     }
   }
   saveImage();
+}
+
+void Rotate()
+{
+  int rotate;
+  cout << "Rotate (90), (180) or (360) degrees? ";
+  cin >> rotate;
+
+  if (rotate == 90) // in case of 90 degrees
+  {
+
+    unsigned char tempImage[SIZE][SIZE];
+
+    memcpy(tempImage, image, SIZE * SIZE * sizeof(unsigned char)); // Create a temporary image array and copy the original image
+
+    for (int i = 0; i < SIZE; i++) // for loop to iterate  all rows in image
+    {
+      for (int j = 0; j < SIZE; j++) // for loop to iterate all the columns in the image
+      {
+
+        image[j][SIZE - 1 - i] = tempImage[i][j]; // the row and column indices swapped and the column index reversed
+      }
+    }
+  }
+  saveImage(); // Save the rotated image
 }
 
 void Blur()
