@@ -254,7 +254,7 @@ void Darken()
 void Rotate()
 {
   int rotate;
-  cout << "Rotate (90), (180) or (360) degrees? ";
+  cout << "Rotate (90), (180) or (270) degrees? ";
   cin >> rotate;
 
   if (rotate == 90) // in case of 90 degrees
@@ -273,6 +273,39 @@ void Rotate()
       }
     }
   }
+
+  else if (rotate == 180)
+  {
+    unsigned char tempImage2[SIZE][SIZE];
+
+    memcpy(tempImage2, image, SIZE * SIZE * sizeof(unsigned char)); // Create a temporary image array and copy the original image
+
+    for (int i = 0; i < SIZE; i++) // for loop to iterate  all rows in image
+    {
+      for (int j = 0; j < SIZE; j++) // for loop to iterate all the columns in the image
+      {
+
+        image[SIZE - 1 - i][SIZE - 1 - j] = tempImage2[i][j]; // the row and column indices reversed
+      }
+    }
+  }
+
+  else if (rotate == 270)
+  {
+    unsigned char tempImage3[SIZE][SIZE];
+
+    memcpy(tempImage3, image, SIZE * SIZE * sizeof(unsigned char)); // Create a temporary image array and copy the original image
+
+    for (int i = 0; i < SIZE; i++) // for loop to iterate  all rows in image
+    {
+      for (int j = 0; j < SIZE; j++) // for loop to iterate all the columns in the image
+      {
+
+        image[SIZE - 1 - j][i] = tempImage3[i][j]; // the row and column indices swapped
+      }
+    }
+  }
+
   saveImage(); // Save the rotated image
 }
 
