@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -252,6 +250,7 @@ void Darken()
   saveImage();
 }
 
+// Rotate
 void Rotate()
 {
   int rotate;
