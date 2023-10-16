@@ -20,6 +20,10 @@ void Flip(char mode);
 void Lighten();
 void Darken();
 void Rotate();
+void Edge();
+void Enlarge();
+void Shrink();
+void mirrorImage();
 void Blur();
 
 int main()
@@ -41,6 +45,10 @@ void showOptions()
   cout << "4-	Flip Image\n";
   cout << "5-	Darken and Lighten Image\n";
   cout << "6-	Rotate Image\n";
+  cout << "7-	Detect Image Edges\n";
+  cout << "8-	Enlarge Image\n";
+  cout << "9-	Shrink Image\n";
+  cout << "a-	Mirror Image\n";
   cout << "c-	Blur Image\n";
 }
 
@@ -104,8 +112,23 @@ void menu()
     else if (ch == '6')
       Rotate();
 
+    else if (ch == '7')
+      Edge();
+
+    else if (ch == '8')
+      Enlarge();
+
+    else if (ch == '9')
+      Shrink();
+
+    else if (ch == 'a')
+      mirrorImage();
+
     else if (ch == 'c')
       Blur();
+
+    else if (ch == 's')
+      saveImage();
 
     showOptions();
     cin >> ch;
@@ -309,6 +332,197 @@ void Rotate()
   saveImage(); // Save the rotated image
 }
 
+// Edges
+void Edge()
+{
+  int avg = 0;
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE; j++)
+    {
+      avg += image[i][j]; // calculating the average gray level
+    }
+  }
+  avg = avg / (SIZE);
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE; j++)
+    {
+      bool higher = false, lower = false;
+      if (image[i][j] >= avg)
+      {
+        higher = true; // check if the current pixel level is higher than the average
+      }
+      else
+      {
+        lower = true; // check if the current pixel level is lower than the average
+      }
+      if (higher)
+      {
+        if (image[i + 1][j] < avg || image[i][j + 1] < avg)
+        {
+          image[i][j] = 0; // if the pixel is higher than the average and neighbour pixels is lower make it black (edge)
+        }
+        else
+        {
+          image[i][j] = 255; // if the pixel is higher than the average and neighbour pixels isn't lower make it white
+        }
+      }
+      else
+      {
+        if (image[i + 1][j] >= avg || image[i][j + 1] >= avg)
+        {
+          image[i][j] = 0; // if the pixel is lower than the average and neighbour pixel is higher make it black (edge)
+        }
+        else
+        {
+          image[i][j] = 255; // if the pixel is lower than the average and neighbour pixel is lower make it white
+        }
+      }
+    }
+  }
+  saveImage();
+}
+
+// Enlarge
+void Enlarge()
+{
+  unsigned char enlargedImage[SIZE][SIZE];
+
+  memcpy(enlargedImage, image, SIZE * SIZE * sizeof(unsigned char));
+
+  int quarterSize = SIZE / 2;
+  int quarterRow, quarterCol;
+
+  cout << "Enter the quarter to enlarge\n "
+          " 1: Top-Left\n"
+          " 2: Top-Right\n"
+          " 3: Bottom-Left\n"
+          " 4: Bottom-Right\n "
+          " choose : ";
+  int choice;
+  cin >> choice;
+
+  if (choice == 1)
+  {
+    quarterRow = 0;
+    quarterCol = 0;
+  }
+  else if (choice == 2)
+  {
+    quarterRow = 0;
+    quarterCol = quarterSize;
+  }
+  else if (choice == 3)
+  {
+    quarterRow = quarterSize;
+    quarterCol = 0;
+  }
+  else if (choice == 4)
+  {
+    quarterRow = quarterSize;
+    quarterCol = quarterSize;
+  }
+  else
+  {
+    cout << "Invalid choice" << endl;
+    quarterRow = 0;
+    quarterCol = 0;
+  }
+
+  for (int i = quarterRow; i < quarterRow + quarterSize; i++)
+  {
+    for (int j = quarterCol; j < quarterCol + quarterSize; j++)
+    {
+      enlargedImage[2 * i][2 * j] = image[i][j];
+      enlargedImage[2 * i][2 * j + 1] = image[i][j];
+      enlargedImage[2 * i + 1][2 * j] = image[i][j];
+      enlargedImage[2 * i + 1][2 * j + 1] = image[i][j];
+    }
+  }
+
+  // Copy the enlarged quarter back to the original image
+  for (int i = quarterRow; i < quarterRow + quarterSize; i++)
+  {
+    for (int j = quarterCol; j < quarterCol + quarterSize; j++)
+    {
+      image[2 * i][2 * j] = enlargedImage[2 * i][2 * j];
+      image[2 * i][2 * j + 1] = enlargedImage[2 * i][2 * j + 1];
+      image[2 * i + 1][2 * j] = enlargedImage[2 * i + 1][2 * j];
+      image[2 * i + 1][2 * j + 1] = enlargedImage[2 * i + 1][2 * j + 1];
+    }
+  }
+  saveImage();
+}
+
+// Shrink
+void Shrink()
+{
+  int shrinkFactor;
+  cout << "Enter the shrink factor (e.g., 2 for half size): ";
+  cin >> shrinkFactor;
+
+  if (shrinkFactor <= 1)
+  {
+    cout << "Shrink factor should be greater than 1. No changes made." << endl;
+    return;
+  }
+
+  int newSize = SIZE / shrinkFactor; // Calculate the new size of the image
+
+  unsigned char shrunkImage[newSize][newSize]; // Create a new smaller image
+
+  // Loop through the shrunk image
+  for (int i = 0; i < newSize; i++)
+  {
+    for (int j = 0; j < newSize; j++)
+    {
+      // Calculate the average value in the original image for each pixel in the shrunk image
+      int sum = 0;
+      for (int x = i * shrinkFactor; x < (i + 1) * shrinkFactor; x++)
+      {
+        for (int y = j * shrinkFactor; y < (j + 1) * shrinkFactor; y++)
+        {
+          sum += image[x][y];
+        }
+      }
+      shrunkImage[i][j] = static_cast<unsigned char>(sum / (shrinkFactor * shrinkFactor));
+    }
+  }
+
+  // Copy the shrunk image back to the original image array
+  for (int i = 0; i < newSize; i++)
+  {
+    for (int j = 0; j < newSize; j++)
+    {
+      image[i][j] = shrunkImage[i][j];
+    }
+  }
+
+  // Save the shrunk image
+  cout << "Image shrunk successfully." << endl;
+  saveImage();
+}
+
+// Mirorr
+void mirrorImage()
+{
+  // Function to mirror the loaded image
+  for (int i = 0; i < SIZE; i++)
+  {
+    for (int j = 0; j < SIZE / 2; j++)
+    {
+      // Swap pixels from left and right sides of the image
+      unsigned char temp = image[i][j];
+      image[i][j] = image[i][SIZE - 1 - j];
+      image[i][SIZE - 1 - j] = temp;
+    }
+  }
+
+  saveImage();
+}
+
+// Blur
 void Blur()
 {
   for (int i = 0; i < SIZE; i++)
