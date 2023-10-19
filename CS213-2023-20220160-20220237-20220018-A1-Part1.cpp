@@ -32,7 +32,7 @@ void Rotate();
 void Edge();
 void Enlarge();
 void Shrink();
-void mirrorImage();
+void MirrorImage();
 void ShuffleImage();
 void Blur();
 void cropImage();
@@ -350,56 +350,30 @@ void Rotate()
 }
 
 // Edges
-void Edge()
-{
-  int avg = 0;
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      avg += image[i][j]; // calculating the average gray level
+void Edge() {
+    int sobelX[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+    int sobelY[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+
+    unsigned char tempImage[SIZE][SIZE];
+    memcpy(tempImage, image, SIZE * SIZE);
+
+    for (int i = 1; i < SIZE - 1; ++i) {
+        for (int j = 1; j < SIZE - 1; ++j) {
+            int gradientX = 0, gradientY = 0;
+            for (int x = -1; x <= 1; ++x) {
+                for (int y = -1; y <= 1; ++y) {
+                    gradientX += tempImage[i + x][j + y] * sobelX[1 + x][1 + y];
+                    gradientY += tempImage[i + x][j + y] * sobelY[1 + x][1 + y];
+                }
+            }
+            int gradientMagnitude = sqrt(gradientX * gradientX + gradientY * gradientY);
+            // Threshold the gradient magnitude to obtain binary edges (inverted)
+            image[i][j] = (gradientMagnitude > 100) ? 0 : 255; // Inverted threshold
+        }
     }
-  }
-  avg = avg / (SIZE);
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
-    {
-      bool higher = false, lower = false;
-      if (image[i][j] >= avg)
-      {
-        higher = true; // check if the current pixel level is higher than the average
-      }
-      else
-      {
-        lower = true; // check if the current pixel level is lower than the average
-      }
-      if (higher)
-      {
-        if (image[i + 1][j] < avg || image[i][j + 1] < avg)
-        {
-          image[i][j] = 0; // if the pixel is higher than the average and neighbour pixels is lower make it black (edge)
-        }
-        else
-        {
-          image[i][j] = 255; // if the pixel is higher than the average and neighbour pixels isn't lower make it white
-        }
-      }
-      else
-      {
-        if (image[i + 1][j] >= avg || image[i][j + 1] >= avg)
-        {
-          image[i][j] = 0; // if the pixel is lower than the average and neighbour pixel is higher make it black (edge)
-        }
-        else
-        {
-          image[i][j] = 255; // if the pixel is lower than the average and neighbour pixel is lower make it white
-        }
-      }
-    }
-  }
-  saveImage();
+    saveImage();
 }
+
 
 // Enlarge
 void Enlarge()
@@ -521,57 +495,128 @@ void Shrink()
   saveImage();
 }
 
-// Mirorr
-void mirrorImage()
-{
-  // Function to mirror the loaded image
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE / 2; j++)
-    {
-      // Swap pixels from left and right sides of the image
-      unsigned char temp = image[i][j];
-      image[i][j] = image[i][SIZE - 1 - j];
-      image[i][SIZE - 1 - j] = temp;
-    }
-  }
+// Mirror Image
+void MirrorImage(){
 
-  saveImage();
+
+    char choice;
+    cout << "Choose an operation:\n"
+         << "1 - Mirror Image Left\n"
+         << "2 - Mirror Image Right\n"
+         << "3 - Mirror Image Upper\n"
+         << "4 - Mirror Image Lower\n";
+    cin>>choice;
+
+    if (choice=='1'){
+        for (int i = 0; i < SIZE; i++) {
+            int x=1;
+            for (int j = SIZE/2; j< SIZE; j++) {
+                image[i][j]=image[i][j-x];
+                x=x+2;
+            }
+        }
+    }
+    else if (choice=='2'){
+        for (int i = 0; i < SIZE; ++i) {
+            int x=255;
+            for (int j = 0; j < SIZE/2; ++j) {
+                image[i][j]=image[i][x];
+                x--;
+            }
+        }
+    }
+    else if (choice=='3'){
+        for (int i = 0; i < SIZE; i++) {
+            int x=1;
+            for (int j = SIZE/2; j< SIZE; j++) {
+                image[j][i]=image[j-x][i];
+                x=x+2;
+            }
+        }
+    }
+    else{
+        for (int i = 0; i < SIZE; ++i) {
+            int x=255;
+            for (int j = 0; j < SIZE/2; ++j) {
+                image[j][i]=image[x][i];
+                x--;
+            }
+        }
+    }
+
+    saveImage();
+
 }
 // ShuffleImage
-void ShuffleImage()
+void shuffle()
 {
-  int totalPixels = SIZE * SIZE;
-  unsigned char temp[totalPixels];
-
-  // Copy all the pixels into a temporary array
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
+    unsigned char image5[256][256] = {255}, image2[256][256] = {255}, image3[256][256] = {255}, image4[256][256] = {255}, image1[256][256] = {255};
+    int a, b, c, d;
+    cout << "Please enter the order you want to shuffle the image with as follows: \n";
+    cout << "x - y - z - l\n";
+    cout << "1 is the top left corner,\n";
+    cout << "2 is the top right corner,\n";
+    cout << "3 is the bottom left corner,\n";
+    cout << "4 is the bottom right corner.\n";
+    cin >> a >> b >> c >> d;
+    for (int i = 0; i < 128; i++)
     {
-      temp[i * SIZE + j] = image[i][j];
+        for (int j = 0; j < 128; j++)
+        {
+            if (a == 1)
+                image1[i][j] = image[i][j];
+            else if (a == 2)
+                image1[i][j + 128] = image[i][j];
+            else if (a == 3)
+                image1[i + 128][j] = image[i][j];
+            else
+                image1[i + 128][j + 128] = image[i][j];
+        }
     }
-  }
-
-  // Shuffle the temporary array using the Fisher-Yates shuffle algorithm
-  for (int i = totalPixels - 1; i > 0; i--)
-  {
-    int j = rand() % (i + 1);
-    // Swap pixels at indices i and j
-    unsigned char pixel = temp[i];
-    temp[i] = temp[j];
-    temp[j] = pixel;
-  }
-
-  // Copy the shuffled pixels back to the image array
-  for (int i = 0; i < SIZE; i++)
-  {
-    for (int j = 0; j < SIZE; j++)
+    for (int i = 0; i < 128; i++)
     {
-      image[i][j] = temp[i * SIZE + j];
+        for (int j = 128; j < 256; j++)
+        {
+            if (b == 1)
+                image2[i][j - 128] = image[i][j];
+            else if (b == 2)
+                image2[i][j] = image[i][j];
+            else if (b == 3)
+                image2[i + 128][j - 128] = image[i][j];
+            else
+                image2[i + 128][j] = image[i][j];
+        }
     }
-  }
-  saveImage();
+    for (int i = 128; i < 256; i++)
+    {
+        for (int j = 0; j < 128; j++)
+            if (c == 1)
+                image3[i - 128][j] = image[i][j];
+            else if (c == 2)
+                image3[i - 128][j + 128] = image[i][j];
+            else if (c == 3)
+                image3[i][j] = image[i][j];
+            else
+                image3[i][j + 128] = image[i][j];
+    }
+    for (int i = 128; i < 256; i++)
+    {
+        for (int j = 128; j < 256; j++)
+        {
+            if (d == 1)
+                image4[i - 128][j - 128] = image[i][j];
+            else if (d == 2)
+                image4[i - 128][j] = image[i][j];
+            else if (d == 3)
+                image4[i][j - 128] = image[i][j];
+            else
+                image4[i][j] = image[i][j];
+        }
+    }
+    for (int i = 0; i < 256; i++)
+        for (int j = 0; j < 256; j++)
+            image[i][j] = image1[i][j] + image2[i][j] + image3[i][j] + image4[i][j];
+    saveImage();
 }
 // Blur
 void Blur()
@@ -585,43 +630,22 @@ void Blur()
   }
   saveImage();
 }
-// crop
-void cropImage()
-{
-  int startX, startY, width, height;
-
-  // Get crop coordinates and dimensions from the user
-  cout << "Enter the starting X-coordinate for cropping: ";
-  cin >> startX;
-  cout << "Enter the starting Y-coordinate for cropping: ";
-  cin >> startY;
-  cout << "Enter the width for cropping: ";
-  cin >> width;
-  cout << "Enter the height for cropping: ";
-  cin >> height;
-
-  if (startX >= 0 && startY >= 0 && startX + width <= SIZE && startY + height <= SIZE)
-  {
-    // Create a new image for the cropped portion
-    unsigned char croppedImage[SIZE][SIZE];
-    for (int i = 0; i < height; i++)
+// Crop Image
+    void Crop()
     {
-      for (int j = 0; j < width; j++)
-      {
-        croppedImage[i][j] = image[startY + i][startX + j];
-      }
+        unsigned char new_image[SIZE][SIZE] ;
+        int x, y, length, width;
+        cout << "Please enter crop details in the following order: \n";
+        cout << "x(start row) - y(start column) - length(num of rows) - width(num of columns): \n";
+        cin >> x >> y >> length >> width;
+        if (x < 0 || y < 0 || x + length > 256 || y + width > 256)
+        {
+            cerr << "Cropping window is outside the bounds of the image.\n";
+            return;
+        }
+        for (int i = 0; i < SIZE; i++)
+            for (int j = 0; j < SIZE; j++)
+                new_image[i][j] = ((i < x || i >= x + length || j < y || j >= y + width) ? 255 : image[i][j]);
+        saveImage();
     }
-
-    // Save the cropped image with a new file name
-    char outputFileName[100];
-    cout << "Enter the target image file name for the cropped image: ";
-    cin >> outputFileName;
-    strcat(outputFileName, ".bmp");
-    saveImage();
-  }
-  else
-  {
-    cout << "Invalid crop coordinates or dimensions. Make sure they are within the image boundaries." << endl;
-  }
-}
 // skew
