@@ -1,4 +1,6 @@
 /.vscode
 *.docx
+*.pdf
+*.zip
 *.exe
 seif.cpp
