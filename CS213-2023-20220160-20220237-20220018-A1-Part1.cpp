@@ -18,6 +18,8 @@ using namespace std;
 unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
 
+unsigned char RGBImage[SIZE][SIZE][RGB];
+
 void loadImage();
 void saveImage();
 void menu();
@@ -36,6 +38,32 @@ void MirrorImage();
 void ShuffleImage();
 void Blur();
 void Crop();
+
+void loadRGB()
+{
+  char imageFileName[100];
+
+  // Get gray scale image file name
+  cout << "Enter the source image file name: ";
+  cin >> imageFileName;
+
+  // Add to it .bmp extension and load image
+  strcat(imageFileName, ".bmp");
+  readRGBBMP(imageFileName, RGBImage);
+}
+
+void saveRGB()
+{
+  char imageFileName[100];
+
+  // Get gray scale image target file name
+  cout << "Enter the target image file name: ";
+  cin >> imageFileName;
+
+  // Add to it .bmp extension and load image
+  strcat(imageFileName, ".bmp");
+  writeRGBBMP(imageFileName, RGBImage);
+}
 
 int main()
 {
