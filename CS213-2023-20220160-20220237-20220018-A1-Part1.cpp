@@ -62,7 +62,7 @@ void showOptions()
   cout << "a-	Mirror Image\n";
   cout << "b- ShuffleImage\n";
   cout << "c-	Blur Image\n";
-  cout << "d-cropImage\n";
+  cout << "d- Crop Image\n";
 }
 
 // Menu
