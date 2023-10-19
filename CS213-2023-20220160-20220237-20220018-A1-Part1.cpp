@@ -1,11 +1,11 @@
 // FCAI – OOP Programming – 2023 - Assignment 1
-// Program Name:CS213-2023-ID 20220160-ID20220018-ID20220237-A1.cpp
+// Program Name:CS213-2023-6-20220160-20220018-20220237-A1.cpp
 // Last Modification Date:	19/10/2023
 // Author1 and ID and Group: seif eldin shady abdelsalam , 20220160, b
-// Author2 and ID and Group: amr tame samy , 20220237 , b
+// Author2 and ID and Group: Amr Tamer Samy , 20220237 , b
 // Author3 and ID and Group: AHMED HUSSEIN SAAD, 20220018 , b
 // Teaching Assistant:		xxxxx xxxxx
-// Purpose:..........
+// Purpose: Learn how image processing work
 
 #include <iostream>
 #include <fstream>
