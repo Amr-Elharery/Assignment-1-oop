@@ -17,6 +17,10 @@ using namespace std;
 
 unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
+unsigned char image3[SIZE][SIZE];
+unsigned char image4[SIZE][SIZE];
+unsigned char image5[SIZE][SIZE];
+unsigned char image6[SIZE][SIZE];
 
 unsigned char RGBImage[SIZE][SIZE][RGB];
 
@@ -35,9 +39,12 @@ void Edge();
 void Enlarge();
 void Shrink();
 void MirrorImage();
-void ShuffleImage();
+void shuffle();
 void Blur();
 void Crop();
+void SkewImageRight();
+void SkewImageUp();
+
 
 void loadRGB()
 {
@@ -77,108 +84,120 @@ int main()
 void showOptions()
 {
 
-  cout << "Please select a filter to apply or 0 to exit:\n";
-  cout << "1-	Black & White Filter\n";
-  cout << "2-	Invert Filter\n";
-  cout << "3-	Merge Filter\n";
-  cout << "4-	Flip Image\n";
-  cout << "5-	Darken and Lighten Image\n";
-  cout << "6-	Rotate Image\n";
-  cout << "7-	Detect Image Edges\n";
-  cout << "8-	Enlarge Image\n";
-  cout << "9-	Shrink Image\n";
-  cout << "a-	Mirror Image\n";
-  cout << "b- ShuffleImage\n";
-  cout << "c-	Blur Image\n";
-  cout << "d- Crop Image\n";
+   cout << "Please select a filter to apply or 0 to exit:\n";
+    cout << "1-	Black & White Filter\n";
+    cout << "2-	Invert Filter\n";
+    cout << "3-	Merge Filter\n";
+    cout << "4-	Flip Image\n";
+    cout << "5-	Darken and Lighten Image\n";
+    cout << "6-	Rotate Image\n";
+    cout << "7-	Detect Image Edges\n";
+    cout << "8-	Enlarge Image\n";
+    cout << "9-	Shrink Image\n";
+    cout << "a-	Mirror Image\n";
+    cout << "b- shuffle\n";
+    cout << "c-	Blur Image\n";
+    cout << "d- crop Image\n";
+    cout << "e- SkewImageRight\n";
+    cout << "f- SkewImageUp()\n";
 }
-
 // Menu
 
 void menu()
 {
-  char ch;
-  showOptions();
-  cin >> ch;
-
-  while (ch)
-  {
-    if (ch == '0')
-    {
-      cout << "Exit done\n";
-      break;
-    }
-
-    else if (ch == '1')
-      bwFilter();
-
-    else if (ch == '2')
-      Invert();
-
-    else if (ch == '3')
-    {
-      char imageFileName[100];
-
-      // Get gray scale image file name
-      cout << "Please enter name of image file to merge with: ";
-      cin >> imageFileName;
-
-      // Add to it .bmp extension and load image
-      strcat(imageFileName, ".bmp");
-      readGSBMP(imageFileName, image2);
-      Merge();
-    }
-
-    else if (ch == '4')
-    {
-      char mode;
-      cout << "Flip (h)orizontally or (v)ertically ?\n";
-      cin >> mode;
-      Flip(mode);
-    }
-
-    else if (ch == '5')
-    {
-      char mode;
-      cout << "Do you want to (d)arken or (l)ighten ?\n";
-
-      cin >> mode;
-
-      if (mode == 'l')
-        Lighten();
-      if (mode == 'd')
-        Darken();
-    }
-
-    else if (ch == '6')
-      Rotate();
-
-    else if (ch == '7')
-      Edge();
-
-    else if (ch == '8')
-      Enlarge();
-
-    else if (ch == '9')
-      Shrink();
-
-    else if (ch == 'a')
-      MirrorImage();
-
-    else if (ch == 'b')
-      ShuffleImage();
-
-    else if (ch == 'c')
-      Blur();
-    else if (ch == 'd')
-      Crop();
-    else if (ch == 's')
-      saveImage();
-
+    char ch;
     showOptions();
     cin >> ch;
-  }
+
+    while (ch)
+    {
+        if (ch == '0')
+        {
+            cout << "Exit done\n";
+            break;
+        }
+
+        else if (ch == '1')
+            bwFilter();
+
+        else if (ch == '2')
+            Invert();
+
+        else if (ch == '3')
+        {
+            char imageFileName[100];
+
+            // Get gray scale image file name
+            cout << "Please enter name of image file to merge with: ";
+            cin >> imageFileName;
+
+            // Add to it .bmp extension and load image
+            strcat(imageFileName, ".bmp");
+            readGSBMP(imageFileName, image2);
+            Merge();
+        }
+
+        else if (ch == '4')
+        {
+            char mode;
+            cout << "Flip (h)orizontally or (v)ertically ?\n";
+            cin >> mode;
+            Flip(mode);
+        }
+
+        else if (ch == '5')
+        {
+            char mode;
+            cout << "Do you want to (d)arken or (l)ighten ?\n";
+
+            cin >> mode;
+
+            if (mode == 'l')
+                Lighten();
+            if (mode == 'd')
+                Darken();
+        }
+
+        else if (ch == '6')
+            Rotate();
+
+        else if (ch == '7')
+            Edge();
+
+        else if (ch == '8')
+            Enlarge();
+
+        else if (ch == '9')
+            Shrink();
+
+        else if (ch == 'a')
+            MirrorImage();
+
+        else if (ch == 'b')
+            shuffle();
+
+        else if (ch == 'c')
+            Blur();
+
+        else if (ch == 'd')
+            Crop();
+
+        else if (ch == 'e')
+            SkewImageRight();
+
+        else if (ch == 'f')
+            SkewImageUp();
+
+        else if (ch == 's')
+            saveImage();
+
+        showOptions();
+        cin >> ch;
+    }
 }
+
+
+
 
 //_________________________________________
 void loadImage()
@@ -700,4 +719,73 @@ void Crop()
   strcat(imageFileName, ".bmp");
   writeGSBMP(imageFileName, new_image);
 }
-// skew
+//skew
+void SkewImageRight()
+{
+
+    double rad;
+    cout << "Enter degree: ";
+    cin >> rad;
+    rad = (rad * 22) / (180 * 7);
+    double mov = tan(rad) * 256;
+    double step = mov / SIZE;
+    unsigned char img_in[SIZE][SIZE + (int)mov];
+    int x=(tan(rad)256)/(tan(rad)+1);
+    for (int i = 0; i < SIZE; i++)
+        for (int j = 0; j < SIZE; j++)
+            img_in[i][j] = 255;
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE ; j++) {
+
+            img_in[i][((((j+ (int)mov) x ))/(int)(SIZE(tan(rad))))] = image[i][j];
+        }
+        mov -= step;
+    }
+
+    for(int i=0 ; i<SIZE ; i++)
+    {
+        for(int j=0 ; j<SIZE ; j++)
+        {
+
+            image[i][j]=img_in[i][j];
+
+        }
+    }
+
+    saveImage();
+}
+
+void SkewImageUp()
+{
+
+    double rad;
+    cout << "Enter degree: ";
+    cin >> rad;
+    rad = (rad 22) / (180 * 7);
+    double mov = tan(rad) * 256;
+    double step = mov / SIZE;
+    unsigned char img_in[SIZE+ (int)mov][SIZE];
+    int x=(tan(rad)256)/(tan(rad)+1);
+    for (int i = 0; i < SIZE; i++)
+        for (int j = 0; j < SIZE; j++)
+            img_in[i][j] = 255;
+
+    for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < SIZE ; i++) {
+            img_in[(((i+(int)mov)x))/(int)(SIZE*(tan(rad)))][j] = image[i][j];
+        }
+        mov -= step;
+    }
+
+    for(int i=0 ; i<SIZE ; i++)
+    {
+        for(int j=0 ; j<SIZE ; j++)
+        {
+
+            image[i][j]=img_in[i][j];
+
+        }
+    }
+    saveImage();
+}
